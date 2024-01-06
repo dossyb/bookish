@@ -14,7 +14,5 @@ module.exports = defineConfig({
       title: 'Bookish - A Social Book Cataloguing Web App',
     },
   },
-  publicPath: process.env.NODE_ENV === 'production'
-  ? '/bookish/'
-  : '/'
+  publicPath: '/bookish/'
 });
