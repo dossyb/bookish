@@ -13,6 +13,5 @@ module.exports = defineConfig({
       // title to be used during template injection
       title: 'Bookish - A Social Book Cataloguing Web App',
     },
-  },
-  publicPath: '/bookish/'
+  }
 });
