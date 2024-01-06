@@ -28,7 +28,7 @@
         <div class='formRow'>
           <!-- Input field for the book's published date -->
           <label for='date'>Published date:</label>
-          <input type='date' v-model="formData.date" name='date'>
+          <input type='date' v-model="formData.publishedDate" name='date'>
           <!-- Input field for the user's rating of the book -->
           <label for='isbn'>Rating (out of 5):</label>
           <input type='number' v-model="formData.starRating" name='starRating' placeholder='5' min='0' max='5'>
@@ -88,28 +88,25 @@
 <script>
 import NavButton from './nav-button.vue';
 
-// Initialise function to return object containing empty form data
-const initialFormData = () => ({
-  title: '',
-  author: '',
-  series: '',
-  seriesNo: 1,
-  publishedDate: '',
-  starRating: 0,
-  summary: '',
-  genres: [],
-  categories: [],
-  coverFront: '',
-  coverBack: ''
-});
-
 export default {
   components: {
     'nav-button': NavButton,
   },
   data() {
     return {
-      formData: initialFormData(),
+      formData: {
+        title: '',
+        author: '',
+        series: '',
+        seriesNo: 1,
+        publishedDate: '',
+        starRating: 0,
+        summary: '',
+        genres: [],
+        categories: [],
+        coverFront: '',
+        coverBack: ''
+      },
       // Temporary storage for genre and category inputs
       genreInput: '',
       categoryInput: '',
@@ -146,7 +143,7 @@ export default {
     // Method to reset form to its initial state
     resetForm() {
       // Call function to reset formData with initial values
-      Object.assign(this.formData, initialFormData());
+      this.formData = this.initialFormData();
       // Clear genre and category inptus
       this.genreInput = '';
       this.categoryInput = '';
@@ -154,8 +151,8 @@ export default {
       this.coverFrontPreview = '/assets/covers/placeholder.png';
       this.coverBackPreview = '/assets/covers/placeholder.png';
       // Clear file input references
-      this.$refs.coverFrontInput.value = '';
-      this.$refs.coverBackInput.value = '';
+      if (this.$refs.coverFrontInput) this.$refs.coverFrontInput.value = '';
+      if (this.$refs.coverBackInput) this.$refs.coverBackInput.value = '';
     },
     // Method to submit the form's data
     submitForm() {
@@ -165,14 +162,13 @@ export default {
         this.formData.starRating = +this.formData.starRating;
 
         // Format and set the published date
-        if (this.formData.date) {
-          const formattedDate = this.formatDate(this.formData.date);
-          this.formData.publishedDate = formattedDate;
+        if (this.formData.publishedDate) {
+          this.formData.publishedDate = this.formatDate(this.formData.publishedDate);
         }
 
         // Emit event with the submitted data and log to console
-        this.$emit('add-book', this.formData);
         console.log('Book added: ', this.formData);
+        this.$emit('add-book', this.formData);
         // Reset form after submission
         this.resetForm();
       } else {
@@ -183,14 +179,14 @@ export default {
     // Method to add a genre to the formData's genre array
     addGenre() {
       if (this.genreInput.trim()) {
-        this.formData.genres.push(this.genreInput.trim());
+        this.formData.genres = [...this.formData.genres, this.genreInput.trim()];
         this.genreInput = '';
       }
     },
     // Method to add a category to the formData's category array
     addCategory() {
       if (this.categoryInput.trim()) {
-        this.formData.categories.push(this.categoryInput.trim());
+        this.formData.categories = [...this.formData.categories, this.categoryInput.trim()];
         this.categoryInput = '';
       }
     },
@@ -208,6 +204,22 @@ export default {
 
       return `${month} ${day}, ${year}`;
     },
+    // Initialise function to return object containing empty form data
+    initialFormData() {
+      return {
+        title: '',
+        author: '',
+        series: '',
+        seriesNo: 1,
+        publishedDate: '',
+        starRating: 0,
+        summary: '',
+        genres: [],
+        categories: [],
+        coverFront: '',
+        coverBack: ''
+      }
+    }
   }
 }
 </script>
@@ -337,6 +349,7 @@ export default {
 
 /* Responsive styling for screens smaller than 1000px wide */
 @media (max-width: 1000px) {
+
   /* Set form container to display in a column so cover upload section is moved below the input fields */
   .formContainer {
     flex-direction: column;
@@ -358,6 +371,7 @@ export default {
 
 /* Responsive styling for screens smaller than 700px wide */
 @media (max-width: 700px) {
+
   /* Display each input field on individual row */
   .formRow {
     flex-direction: column;
