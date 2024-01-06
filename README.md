@@ -28,3 +28,4 @@
 * Expand book details page functionality.
 * Add cookies!
 * Add a back-end (at least a DB).
+* Add user account functionality and authentication
