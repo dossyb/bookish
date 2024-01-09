@@ -1,10 +1,6 @@
 # Bookish - A Social Book Cataloguing Web App
 
-## Todo list for uni submission
-
-* Convert watered-down version to CodePen (💀💀💀💀💀💀💀💀💀)
-
-## STRETCH GOALS
+## Planned features
 
 * Set placeholder image for books added without a cover
 * Update pathing of assets for build version
