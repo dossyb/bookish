@@ -1,7 +1,12 @@
 # Bookish - A Social Book Cataloguing Web App
 
+Bookish is an online platform that provides users with a digitised bookshelf to view, update and organise their book collection across all reading formats including physical books, eBooks and audiobooks. Users will be able to view details about each book and interact with each book's cover, as well as create and manage new bookshelves filtered by categories.  
+
+This web app was created as my project for SIT120 Introduction to Responsive Web Apps, but I plan on continue to work on this app beyond the end of the unit to continue developing new features and evolve Bookish into a fully functional CRUD application. The current todo list of features is shown below in no particular order than the largest scope items being at the bottom.
+
 ## Planned features
 
+* Convert from Vue 2 to Vue 3 (uni required the app to be in Vue 2 despite it reaching EOL at the end of 2023)
 * Set placeholder image for books added without a cover
 * Update pathing of assets for build version
 * Fix some of the responsive side panel's functionality
