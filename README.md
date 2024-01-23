@@ -9,6 +9,7 @@ This web app was created as my project for SIT120 Introduction to Responsive Web
 * Convert from Vue 2 to Vue 3 (uni required the app to be in Vue 2 despite it reaching EOL at the end of 2023).
 * Set placeholder image for books added without a cover.
 * Update pathing of assets for build version.
+* Add hover text on book covers in Homepage view to display book's title, this will allow the user to distinguish between multiple books with a placeholder cover.
 * Fix some of the responsive side panel's functionality.
 * Change "Add new book" button to a plus symbol and make the text appear when hovered over.
 * Show 3 bookshelves by default regardless of number of books in books.json.
