@@ -86,38 +86,36 @@
 </template>
   
 <script>
+import { ref, reactive } from 'vue';
 import NavButton from './nav-button.vue';
 
 export default {
   components: {
     'nav-button': NavButton,
   },
-  data() {
-    return {
-      formData: {
-        title: '',
-        author: '',
-        series: '',
-        seriesNo: 1,
-        publishedDate: '',
-        starRating: 0,
-        summary: '',
-        genres: [],
-        categories: [],
-        coverFront: '',
-        coverBack: ''
-      },
-      // Temporary storage for genre and category inputs
-      genreInput: '',
-      categoryInput: '',
-      // Placeholder image paths for the cover previews
-      coverFrontPreview: '/assets/covers/placeholder.png',
-      coverBackPreview: '/assets/covers/placeholder.png',
-    }
-  },
-  methods: {
+  setup(_, { emit }) {
+    const formData = reactive({
+      title: '',
+      author: '',
+      series: '',
+      seriesNo: 1,
+      publishedDate: '',
+      starRating: 0,
+      summary: '',
+      genres: [],
+      categories: [],
+      coverFront: '',
+      coverBack: ''
+    });
+    // Temporary storage for genre and category inputs
+    const genreInput = ref('');
+    const categoryInput = ref('');
+    // Placeholder image paths for the cover previews
+    const coverFrontPreview = ref('/assets/covers/placeholder.png');
+    const coverBackPreview = ref('/assets/covers/placeholder.png');
+
     // Method to preview the book cover image
-    previewCover(event, coverType) {
+    const previewCover = (event, coverType) => {
       const file = event.target.files[0];
       if (file) {
         // Create a URL for the file object for preview
@@ -125,73 +123,67 @@ export default {
         reader.onload = (e) => {
           // Update preview with image based on cover type (front or back)
           if (coverType === 'front') {
-            this.coverFrontPreview = e.target.result;
+            coverFrontPreview.value = e.target.result;
           } else if (coverType === 'back') {
-            this.coverBackPreview = e.target.result;
+            coverBackPreview.value = e.target.result;
           }
         };
         // Read the file's name
         reader.readAsDataURL(file);
         // Set the file name in formData for submission
         if (coverType === 'front') {
-          this.formData.coverFront = file.name;
+          formData.coverFront = file.name;
         } else if (coverType === 'back') {
-          this.formData.coverBack = file.name;
+          formData.coverBack = file.name;
         }
       }
-    },
+    };
     // Method to reset form to its initial state
-    resetForm() {
-      // Call function to reset formData with initial values
-      this.formData = this.initialFormData();
-      // Clear genre and category inptus
-      this.genreInput = '';
-      this.categoryInput = '';
-      // Set cover previews to placeholders
-      this.coverFrontPreview = '/assets/covers/placeholder.png';
-      this.coverBackPreview = '/assets/covers/placeholder.png';
-      // Clear file input references
-      if (this.$refs.coverFrontInput) this.$refs.coverFrontInput.value = '';
-      if (this.$refs.coverBackInput) this.$refs.coverBackInput.value = '';
-    },
+    const resetForm = () => {
+      Object.assign(formData, initialFormData());
+      coverFrontPreview.value = '/assets/covers/placeholder.png';
+      coverBackPreview.value = '/assets/covers/placeholder.png';
+    };
+
     // Method to submit the form's data
-    submitForm() {
+    const submitForm = () => {
       // Check if required fields are filled
-      if (this.formData.title.trim() && this.formData.author.trim()) {
+      if (formData.title.trim() && formData.author.trim()) {
         // Explicitly set starRating as an integer
-        this.formData.starRating = +this.formData.starRating;
+        formData.starRating = +formData.starRating;
 
         // Format and set the published date
-        if (this.formData.publishedDate) {
-          this.formData.publishedDate = this.formatDate(this.formData.publishedDate);
+        if (formData.publishedDate) {
+          formData.publishedDate = formatDate(formData.publishedDate);
         }
 
         // Emit event with the submitted data and log to console
-        console.log('Book added: ', this.formData);
-        this.$emit('add-book', this.formData);
-        // Reset form after submission
-        this.resetForm();
+        console.log('Book added: ', formData);
+        emit('add-book', formData);
       } else {
         // Input validation alert if required fields aren't filled
         alert('Please fill out all required fields.');
       }
-    },
+    };
+
     // Method to add a genre to the formData's genre array
-    addGenre() {
-      if (this.genreInput.trim()) {
-        this.formData.genres = [...this.formData.genres, this.genreInput.trim()];
-        this.genreInput = '';
+    const addGenre = () => {
+      if (genreInput.value.trim()) {
+        formData.genres = [...formData.genres, genreInput.value.trim()];
+        genreInput.value = '';
       }
-    },
+    };
+
     // Method to add a category to the formData's category array
-    addCategory() {
-      if (this.categoryInput.trim()) {
-        this.formData.categories = [...this.formData.categories, this.categoryInput.trim()];
-        this.categoryInput = '';
+    const addCategory = () => {
+      if (categoryInput.value.trim()) {
+        formData.categories = [...formData.categories, categoryInput.value.trim()];
+        categoryInput.value = '';
       }
-    },
+    };
+
     // Format date string into a readable format for display in the book's details
-    formatDate(date) {
+    const formatDate = (date) => {
       // Return empty string if no date set
       if (!date) return '';
 
@@ -203,9 +195,10 @@ export default {
       const day = parseInt(dateParts[2], 10);
 
       return `${month} ${day}, ${year}`;
-    },
+    };
+
     // Initialise function to return object containing empty form data
-    initialFormData() {
+    const initialFormData = () => {
       return {
         title: '',
         author: '',
@@ -218,9 +211,16 @@ export default {
         categories: [],
         coverFront: '',
         coverBack: ''
-      }
-    }
-  }
+      };
+    };
+
+    return { formData, genreInput, categoryInput, coverFrontPreview, coverBackPreview, previewCover, resetForm, submitForm, addGenre, addCategory, formatDate, initialFormData };
+  },
+  // this.genreInput = '';
+  // this.categoryInput = '';
+  // if (this.$refs.coverFrontInput) this.$refs.coverFrontInput.value = '';
+  // if (this.$refs.coverBackInput) this.$refs.coverBackInput.value = '';
+
 }
 </script>
   

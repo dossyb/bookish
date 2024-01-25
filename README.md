@@ -10,6 +10,7 @@ This web app was created as my project for SIT120 Introduction to Responsive Web
 * Set placeholder image for books added without a cover.
 * Update pathing of assets for build version.
 * Add hover text on book covers in Homepage view to display book's title, this will allow the user to distinguish between multiple books with a placeholder cover.
+* Pre-load back cover when component is mounted rather than when arrow is clicked
 * Fix some of the responsive side panel's functionality.
 * Change "Add new book" button to a plus symbol and make the text appear when hovered over.
 * Show 3 bookshelves by default regardless of number of books in books.json.
@@ -29,6 +30,7 @@ This web app was created as my project for SIT120 Introduction to Responsive Web
 * Expand book details page functionality.
 * Add an edit page similar to the new book form that allows a user to edit the book details.
 * Add ability to delete a book from the user's bookshelf.
+* Clean up console log errors and warnings
 * Add cookies to remember user settings
 * Add a back-end (at least a DB).
 * Add user account functionality and authentication

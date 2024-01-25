@@ -1,5 +1,5 @@
 <template>
-    <div class="bookDetails">
+    <div class="bookDetails" v-if="book.coverFront">
         <!-- Book cover component displaying either front or back cover -->
         <book-cover :coverFront="'/assets/covers/' + book.coverFront"
             :coverBack="book.coverBack ? '/assets/covers/' + book.coverBack : null"></book-cover>
@@ -37,6 +37,8 @@
 </template>
   
 <script>
+import { ref, computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import BookCover from './book-cover.vue'
 
 export default {
@@ -50,22 +52,22 @@ export default {
     components: {
         'book-cover': BookCover,
     },
-    data() {
-        return {
-            // Initialise book as empty object
-            book: {}
-        }
-    },
-    // When component is created, populate book object with details of the book in the books array with the ID matching the route
-    created() {
-        const bookId = this.$route.params.id;
-        this.book = this.books.find(b => b.id === bookId) || {};
-    },
-    computed: {
+    setup(props) {
+        const route = useRoute();
+        // Initialise book as empty object
+        const book = ref({});
+
+    // Populate book object with details of the book in the books array with the ID matching the route
+        onMounted(() => {
+        const bookId = route.params.id;
+        book.value = props.books.find(b => b.id === bookId) || {};
+        });
+
         // Computed property to split the book summary into separate paragraphs
-        paragraphs() {
-            return this.book.summary ? this.book.summary.split('\\n\\n') : [];
-        }
+        const paragraphs = computed(() => {
+            return book.value.summary ? book.value.summary.split('\\n\\n') : [];
+        });
+        return { book, paragraphs };
     }
 }
 </script>
@@ -124,6 +126,7 @@ export default {
 }
 
 @media (max-width: 1200px) {
+
     /* Display book cover and details in a column on smaller screens */
     .bookDetails {
         flex-direction: column;
@@ -147,4 +150,5 @@ export default {
     .starRating {
         margin-left: 0;
     }
-}</style>
+}
+</style>

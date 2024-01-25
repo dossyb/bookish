@@ -1,16 +1,11 @@
 // Import Vue and necessary components/data
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import App from './App.vue'
-import Homepage from './components/homepage.vue'
-import BookDetails from './components/book-details.vue'
-import NewBookForm from './components/new-book-form.vue'
-import booksData from '../public/books.json'
-
-Vue.config.productionTip = false
-
-// Register VueRouter plugin
-Vue.use(VueRouter);
+import { createApp } from 'vue';
+import { createRouter, createWebHistory } from 'vue-router';
+import App from './App.vue';
+import Homepage from './components/homepage.vue';
+import BookDetails from './components/book-details.vue';
+import NewBookForm from './components/new-book-form.vue';
+import booksData from '../public/books.json';
 
 // Define Vue app routes - each route is mapped to a component and receives specific props
 const routes = [
@@ -20,9 +15,9 @@ const routes = [
 ];
 
 // Create VueRouter instance
-const router = new VueRouter({
+const router = createRouter({
+  history: createWebHistory(),
   routes,
-  mode: 'history',
   // Define scroll behaviour to snap to top of page when view changes
   scrollBehavior() {
     document.getElementById('app').scrollIntoView();
@@ -30,7 +25,6 @@ const router = new VueRouter({
 })
 
 // Create new Vue instance to render App.vue and assign routing
-new Vue({
-  render: h => h(App),
-  router,
-}).$mount('#app')
+const app = createApp(App);
+app.use(router);
+app.mount('#app');

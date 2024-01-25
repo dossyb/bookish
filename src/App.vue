@@ -5,11 +5,11 @@
       <!-- App header component including bindings for the side panel's collapse state, currently selected category, and whether categories are being filtered -->
       <app-header v-bind="{ isCollapsed, selectedCategory, isFiltered }" :style="{ 'margin-right': contentMargin }"
         @reset-filter="handleResetFilter" />
-        <!-- Side panel component including bindings for the category list, collapse state, and the currently selected category -->
+      <!-- Side panel component including bindings for the category list, collapse state, and the currently selected category -->
       <side-panel v-bind="{ categories, isCollapsed, selectedCategory }" @update:categories="updateCategories"
         @update:isCollapsed="isCollapsed = $event" @update:selectedCategory="selectedCategory = $event"
         @filter-category="handleCategoryFilter" />
-        <!-- Router view displaying the component for the current route -->
+      <!-- Router view displaying the component for the current route -->
       <router-view :filtered-books="filteredBooks" :style="{ 'margin-right': contentMargin }" @add-book="addNewBook" />
       <!-- App footer component -->
       <app-footer :style="{ 'margin-right': contentMargin }" />
@@ -21,6 +21,8 @@
 
 <script>
 // Import Vue components and data
+import { onMounted, onBeforeUnmount, ref, computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import AppHeader from './components/app-header.vue'
 import AppFooter from './components/app-footer.vue'
 import SidePanel from './components/side-panel.vue'
@@ -37,82 +39,81 @@ export default {
     'app-footer': AppFooter,
     'side-panel': SidePanel,
   },
-  data() {
-    return {
-      title: 'Bookish',
-      books: booksData,
-      selectedBook: booksData[0],
-      selectedCategory: 'All Books',
-      isCollapsed: window.innerWidth < 700,
-      isFiltered: false,
-      categories: ['All Books', 'Favourites', 'Read', 'Currently Reading', 'Unread', 'DNF', 'Fantasy', 'Classics', 'LGBT', 'Science Fiction', 'Non-Fiction', 'eBook', 'Audiobook', 'Paperback', 'Hardcover', 'Borrowed'],
-      filteredBooks: booksData,
-      showPopup: false,
-      windowWidth: window.innerWidth,
-    }
-  },
-  // Add event listener to handle window resizes when component loads
-  created() {
-    window.addEventListener('resize', this.handleResize);
-    this.handleResize();
-  },
-  // Remove event listener when component is destroyed
-  beforeDestroy() {
-    window.removeEventListener('resize', this.handleResize);
-  },
-  // Computed property that handles dynamic content margin based on the width of the user's window
-  computed: {
-    contentMargin() {
-      return this.windowWidth < COLLAPSE_WIDTH ? '0' : (this.isCollapsed ? '0' : '280px');
-    }
-  },
-  props: {
-    book: {
-      type: Object,
-      default: () => ({})
-    }
-  },
-  methods: {
+  setup() {
+    const router = useRouter();
+    const route = useRoute();
+    const title = ref('Bookish');
+    const books = ref(booksData);
+    const selectedBook = ref(booksData[0]);
+    const selectedCategory = ref('All Books');
+    const isCollapsed = ref(window.innerWidth < 700);
+    const isFiltered = ref(false);
+    const categories = ref(['All Books', 'Favourites', 'Read', 'Currently Reading', 'Unread', 'DNF', 'Fantasy', 'Classics', 'LGBT', 'Science Fiction', 'Non-Fiction', 'eBook', 'Audiobook', 'Paperback', 'Hardcover', 'Borrowed']);
+    const filteredBooks = ref(booksData);
+    const showPopup = ref(false);
+    const windowWidth = ref(window.innerWidth);
+
+    const contentMargin = computed(() => {
+      return windowWidth.value < COLLAPSE_WIDTH ? '0' : (isCollapsed.value ? '0' : '280px');
+    });
+
+    const handleResize = () => {
+      windowWidth.value = window.innerWidth;
+      isCollapsed.value = window.innerWidth < COLLAPSE_WIDTH;
+    };
+    // Add event listener to handle window resizes when component loads
+    onMounted(() => {
+      window.addEventListener('resize', handleResize);
+      handleResize();
+    });
+    // Remove event listener when component is destroyed
+    onBeforeUnmount(() => {
+      window.removeEventListener('resize', handleResize);
+    });
     // Method handling category filtering when the user clicks on a category in the side panel
-    handleCategoryFilter(category) {
-      this.isFiltered = category !== 'All Books';
+    const handleCategoryFilter = (category) => {
+      isFiltered.value = category !== 'All Books';
+      console.log(isFiltered.value);
       if (category === 'All Books') {
-        this.filteredBooks = this.books;
+        filteredBooks.value = books.value;
       } else {
-        this.filteredBooks = this.books.filter(book => book.categories.includes(category));
+        filteredBooks.value = books.value.filter(book => book.categories.includes(category));
       }
-      if (this.$route.path !== '/') {
-        this.$router.push('/');
+      if (route.path !== '/') {
+        router.push('/');
       }
-    },
+    };
     // Method handling filter resetting to show all books when back button or header logo is clicked
-    handleResetFilter() {
-      this.isFiltered = false;
-      this.selectedCategory = 'All Books';
-      this.handleCategoryFilter('All Books');
-    },
-    // Method handling the window resizing
-    handleResize() {
-      this.windowWidth = window.innerWidth;
-      this.isCollapsed = window.innerWidth < COLLAPSE_WIDTH;
-    },
+    const handleResetFilter = () => {
+      isFiltered.value = false;
+      selectedCategory.value = 'All Books';
+      handleCategoryFilter('All Books');
+    };
     // Method that updates the category list when the user adds a new category
-    updateCategories(newCategory) {
-      if (!this.categories.includes(newCategory)) {
-        this.categories.push(newCategory);
+    const updateCategories = (newCategory) => {
+      if (!categories.value.includes(newCategory)) {
+        categories.value.push(newCategory);
       }
-    },
+    };
     // Method that pushes book data submitted via new book form to the books array and shows a confirmation popup
-    addNewBook(newBookData) {
+    const addNewBook = (newBookData) => {
+      console.log(newBookData);
       newBookData.id = `${Date.now()}`;
-      this.books.push(newBookData);
-      this.$router.push('/');
-      this.showPopup = true;
+      books.value.push(newBookData);
+      router.push('/');
+      showPopup.value = true;
       setTimeout(() => {
-        this.showPopup = false;
+        showPopup.value = false;
       }, POPUP_TIMEOUT);
-    }
+    };
+    return { title, books, selectedBook, selectedCategory, isCollapsed, isFiltered, categories, filteredBooks, showPopup, windowWidth, contentMargin, handleCategoryFilter, handleResetFilter, updateCategories, addNewBook };
   }
+  // props: {
+  //   book: {
+  //     type: Object,
+  //     default: () => ({})
+  //   }
+  // },
 }
 </script>
 

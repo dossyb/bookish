@@ -14,37 +14,28 @@
 </template>
   
 <script>
+import { ref, computed } from 'vue';
 
 export default {
   // Pass through book's front and back cover from books array
   props: {
-    coverFront: {
-      type: String,
-      default: ''
-    },
-    coverBack: {
-      type: String,
-      default: ''
-    }
+    coverFront: String,
+    coverBack: String
   },
-  data() {
-    return {
-      // Initialise currentCover with the book's front cover
-      currentCover: this.coverFront
-    }
-  },
-  computed: {
+  setup(props) {
+    // Initialise currentCover with the book's front cover
+    const currentCover = ref(props.coverFront);
+
     // Check if back cover image exists in the current book object
-    hasBackCover() {
-      return this.coverBack && this.coverBack.trim().length > 0;
-    }
-  },
-  methods: {
+    const hasBackCover = computed(() => {
+      return props.coverBack && props.coverBack.trim().length > 0;
+    });
     // Switch cover between front and back
-    switchCover() {
-      this.currentCover = this.currentCover === this.coverFront ? this.coverBack: this.coverFront;
-    }
-  }
+    const switchCover = () => {
+      currentCover.value = currentCover.value === props.coverFront ? props.coverBack : props.coverFront;
+    };
+    return { currentCover, hasBackCover, switchCover };
+  },
 }
 
 </script>
@@ -71,9 +62,10 @@ export default {
 }
 
 /* Position and size the arrows */
-.arrow-l, .arrow-r {
+.arrow-l,
+.arrow-r {
   position: absolute;
-  top: 105%; 
+  top: 105%;
   max-width: 50px;
   max-height: 40px;
   cursor: pointer;
@@ -94,11 +86,12 @@ img.arrow:hover {
 }
 
 /* Transition for the book cover change */
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.5s;
 }
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
 
-</style>
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}</style>

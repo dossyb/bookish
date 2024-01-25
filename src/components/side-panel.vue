@@ -31,13 +31,14 @@
       <!-- Input field for new bookshelf name -->
       <input type='text' placeholder='Add new bookshelf...' class='newBookshelf' v-model="newBookshelf"
         @keyup.enter="addBookshelf">
-        <!-- Submit button for new bookshelf -->
+      <!-- Submit button for new bookshelf -->
       <img src='https://simpleicon.com/wp-content/uploads/plus.svg' v-on:click="addBookshelf">
     </div>
   </div>
 </template>
   
 <script>
+import { ref, computed } from 'vue';
 
 export default {
   props: {
@@ -50,45 +51,46 @@ export default {
     categories: Array,
     selectedCategory: String,
   },
-  data() {
-    return {
-      // Temporary storage for new bookshelf name added by user
-      newBookshelf: ''
-    }
-  },
-  computed: {
+  setup(props, { emit }) {
+    // Temporary storage for new bookshelf name added by user
+    const newBookshelf = ref('');
+
     // Computed style to determine the panel's position
-    panelStyle() {
-      return { right: this.isCollapsed ? '-300px' : '0' };
-    },
+    const panelStyle = computed(() => {
+      return { right: props.isCollapsed ? '-300px' : '0' };
+    });
     // Computed property to determine collapse tab icon's HTML content on mobile
-    mobileIcon() {
-      return this.isCollapsed ? '&#9776;' : '&#10005;';
-    },
+    const mobileIcon = computed(() => {
+      return props.isCollapsed ? '&#9776;' : '&#10005;';
+    });
+
     // Computed property to determine collapse tab icon's HTML content on bigger screens
-    defaultIcon() {
-      return this.isCollapsed ? '&#10094;' : '&#10095;';
-    }
-  },
-  methods: {
+    const defaultIcon = computed(() => {
+      return props.isCollapsed ? '&#10094;' : '&#10095;';
+    });
+
     // Method to toggle the side panel's collapsed state
-    togglePanel() {
-      this.$emit('update:isCollapsed', !this.isCollapsed);
-    },
+    const togglePanel = () => {
+      emit('update:isCollapsed', !props.isCollapsed);
+    };
+
     // Method to add a new bookshelf to the categories array
-    addBookshelf() {
-      const newCategory = this.newBookshelf.trim();
+    const addBookshelf = () => {
+      const newCategory = newBookshelf.value.trim();
       if (newCategory) {
-        this.$emit('update:categories', newCategory);
-        this.newBookshelf = '';
+        emit('update:categories', newCategory);
+        newBookshelf.value = '';
       }
-    },
+    };
+
     // Method to emit the filtered category to the parent component when the bookshelf is clicked
-    filterByCategory(category) {
-      this.$emit('update:selectedCategory', category);
-      this.$emit('filter-category', category);
-    }
-  }
+    const filterByCategory = (category) => {
+      emit('update:selectedCategory', category);
+      emit('filter-category', category);
+    };
+
+    return { newBookshelf, panelStyle, mobileIcon, defaultIcon, togglePanel, addBookshelf, filterByCategory };
+  },
 }
 </script>
   
@@ -196,64 +198,65 @@ export default {
 
 /* Show default icon set and hide mobile on larger screens */
 .icon-default {
-  display: inline; 
+  display: inline;
 }
 
 .icon-mobile {
-  display: none; 
+  display: none;
 }
 
 @media (max-width: 700px) {
+
   /* Collapsed state of panel container on mobile */
   #panelContainer {
     position: fixed;
-    right: auto; 
-    left: 0; 
+    right: auto;
+    left: 0;
     bottom: 0;
-    top: auto; 
-    width: 100%; 
+    top: auto;
+    width: 100%;
     height: 50px;
-    transform: none; 
-    transition: bottom 0.5s ease; 
+    transform: none;
+    transition: bottom 0.5s ease;
   }
 
   #panelContainer.collapsed #sidePanel,
   #panelContainer.collapsed #addNewShelf {
-    display: none; 
+    display: none;
   }
 
   /* Panel fills screen when expanded and extends from the bottom up */
   #panelContainer:not(.collapsed) {
     height: 100%;
-    top: 0px; 
-    bottom: 50px; 
-    overflow-y: auto; 
+    top: 0px;
+    bottom: 50px;
+    overflow-y: auto;
     padding-bottom: 280px;
   }
 
   /* Input field fixed at bottom of expanded view */
   #addNewShelf {
-    position: fixed; 
-    bottom: 50px; 
-    left: 0; 
-    width: 100%; 
+    position: fixed;
+    bottom: 50px;
+    left: 0;
+    width: 100%;
     padding: 0 10px;
-    box-sizing: border-box; 
-    background: #d1d1d1; 
-    z-index: 3; 
+    box-sizing: border-box;
+    background: #d1d1d1;
+    z-index: 3;
   }
 
   /* Fix collapse tab to the bottom of the viewport */
   #collapseTab {
     position: fixed;
-    bottom: 0; 
+    bottom: 0;
     right: 0;
     width: 100%;
     height: 50px;
-    z-index: 4; 
+    z-index: 4;
     top: auto;
-    bottom: 0; 
-    transform: none; 
+    bottom: 0;
+    transform: none;
   }
 
   /* Make sure the panel's content starts from the top */
@@ -264,12 +267,11 @@ export default {
 
   /* Show mobile icon set and hide default on smaller screens */
   .icon-default {
-    display: none; 
+    display: none;
   }
 
   .icon-mobile {
-    display: inline; 
+    display: inline;
   }
 }
-
 </style>

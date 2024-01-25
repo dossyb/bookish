@@ -18,7 +18,7 @@
                 <!-- Nav button for general navigation -->
                 <nav-button :text="buttonText" eventName="navigate" @navigate="handleNavigation"></nav-button>
                 <!-- Secondary nav button conditionally shown when the view is filtered by a category -->
-                <nav-button :text="backButtonText" eventName="navigate" v-if="isFiltered && $route.path === '/'"
+                <nav-button :text="backButtonText" eventName="navigate" v-if="isFiltered & isHomepage"
                     @navigate="resetFilter"></nav-button>
             </div>
         </div>
@@ -29,80 +29,78 @@
   
 <script>
 // Import the NavButton component
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import NavButton from './nav-button.vue'
 
 // Constant for the responsive breakpoint
 const BREAKPOINT_WIDTH = 1000;
 
 export default {
-    components: {
-        'nav-button': NavButton,
-    },
-    data() {
-        return {
-            // Initial screen width
-            screenWidth: window.innerWidth,
-        }
-    },
-    // Add event listener and update screen width value when the component is mounted
-    mounted() {
-        window.addEventListener('resize', this.updateScreenWidth);
-        this.updateScreenWidth();
-    },
-    // Remove event listener when component is destroyed
-    beforeDestroy() {
-        window.removeEventListener('resize', this.updateScreenWidth);
-    },
-    // Pass through isFiltered and selectedCategory values from App.vue
     props: {
         isFiltered: {
             type: Boolean,
             default: false
         },
-        selectedCategory: {
-            type: String,
-            default: 'Your Books'
-        },
     },
-    computed: {
+    components: {
+        'nav-button': NavButton,
+    },
+    setup(_, { emit }) {
+        const route = useRoute();
+        const router = useRouter();
+        const isHomepage = computed(() => route.path === '/');
+        // Initial screen width
+        const screenWidth = ref(window.innerWidth);
+        const selectedCategory = ref('Your Books');
+        // Add event listener and update screen width value when the component is mounted
+        onMounted(() => {
+            window.addEventListener('resize', updateScreenWidth);
+            updateScreenWidth();
+        });
+        // Remove event listener when component is destroyed
+        onBeforeUnmount(() => {
+            window.removeEventListener('resize', updateScreenWidth);
+        });
         // Dynamically update nav button's inner text based on screen width
-        buttonText() {
-            if (this.screenWidth <= BREAKPOINT_WIDTH) {
-                return this.$route.path === '/' ? '+' : '<';
+        const buttonText = computed(() => {
+            if (screenWidth.value <= BREAKPOINT_WIDTH) {
+                return route.path === '/' ? '+' : '<';
             }
-            return this.$route.path === '/' ? 'Add a book' : 'Go back';
-        },
+            return route.path === '/' ? 'Add a book' : 'Go back';
+        });
         // Dynamically update secondary nav button's inner text based on screen width
-        backButtonText() {
-            if (this.screenWidth <= BREAKPOINT_WIDTH) {
+        const backButtonText = computed(() => {
+            if (screenWidth.value <= BREAKPOINT_WIDTH) {
                 return '<';
             }
             return 'Go back';
-        },
+        });
         // Dynamically display the currently selected category or 'Your Books' by default
-        displayedCategory() {
-            return this.selectedCategory === 'All Books' ? 'Your Books' : this.selectedCategory;
-        }
-    },
-    methods: {
+        const displayedCategory = computed(() => {
+            return selectedCategory.value === 'All Books' ? 'Your Books' : selectedCategory.value;
+        });
+
         // Handle navigation of the nav buttons
-        handleNavigation() {
-            if (this.$route.path === '/') {
-                this.$router.push('/new');
+        const handleNavigation = () => {
+            if (route.path === '/') {
+                router.push('/new');
             } else {
-                this.$router.push('/');
+                router.push('/');
             }
-        },
+        };
         // Reset filtered category to default
-        resetFilter() {
-            this.$emit('reset-filter');
-        },
+        const resetFilter = () => {
+            emit('reset-filter');
+        };
         // Update the screen width value upon resize
-        updateScreenWidth() {
-            this.screenWidth = window.innerWidth;
-        },
+        const updateScreenWidth = () => {
+            screenWidth.value = window.innerWidth;
+        };
+        return { isHomepage, screenWidth, selectedCategory, buttonText, backButtonText, displayedCategory, handleNavigation, resetFilter, updateScreenWidth };
     }
 }
+
 </script>
   
 <style scoped>
@@ -222,7 +220,7 @@ export default {
     #header {
         padding: 0;
     }
-    
+
     #navButton {
         height: 40px;
         padding: 0 15px;
