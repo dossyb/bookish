@@ -1,8 +1,8 @@
 <template>
     <div class="bookDetails" v-if="book.coverFront">
         <!-- Book cover component displaying either front or back cover -->
-        <book-cover :coverFront="'/assets/covers/' + book.coverFront"
-            :coverBack="book.coverBack ? '/assets/covers/' + book.coverBack : null"></book-cover>
+        <book-cover :coverFront="book.id.startsWith('501') ? '/assets/covers/' + book.coverFront : book.coverFront"
+            :coverBack="book.coverBack && !book.id.startsWith('501') ? book.coverBack : (book.coverBack ? '/assets/covers/' + book.coverBack : null)"></book-cover>
         <div class="detailsContent">
             <!-- Heading section with series shown dynamically if series data exists-->
             <div class='detailsHeading'>

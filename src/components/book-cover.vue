@@ -28,7 +28,7 @@ export default {
 
     // Check if back cover image exists in the current book object
     const hasBackCover = computed(() => {
-      return props.coverBack && props.coverBack.trim().length > 0;
+      return props.coverBack && props.coverBack.trim().length > 0 && props.coverBack.trim() !== 'placeholder.png';
     });
     // Switch cover between front and back
     const switchCover = () => {
@@ -94,4 +94,5 @@ img.arrow:hover {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
-}</style>
+}
+</style>

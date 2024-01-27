@@ -4,7 +4,7 @@
     <div class='book' v-for="book in books" :key="book.id">
       <!-- Book cover acts as a link to the respective book's details page -->
       <router-link :to="`/book/${book.id}`">
-        <div class='cover' :style="{ backgroundImage: 'url(/assets/covers/' + book.coverFront + ')' }"></div>
+        <div class='cover' :style="{ backgroundImage: book.id.startsWith('501') ? 'url(/assets/covers/' + book.coverFront + ')' : 'url(' + book.coverFront + ')' }"></div>
       </router-link>
     </div>
     <!-- Divider separates bookshelf from other instances of component -->

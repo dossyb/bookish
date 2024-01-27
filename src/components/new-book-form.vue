@@ -124,18 +124,20 @@ export default {
           // Update preview with image based on cover type (front or back)
           if (coverType === 'front') {
             coverFrontPreview.value = e.target.result;
+            formData.coverFront = e.target.result;
           } else if (coverType === 'back') {
             coverBackPreview.value = e.target.result;
+            formData.coverBack = e.target.result;
           }
         };
         // Read the file's name
         reader.readAsDataURL(file);
         // Set the file name in formData for submission
-        if (coverType === 'front') {
-          formData.coverFront = file.name;
-        } else if (coverType === 'back') {
-          formData.coverBack = file.name;
-        }
+        // if (coverType === 'front') {
+        //   formData.coverFront = file.name;
+        // } else if (coverType === 'back') {
+        //   formData.coverBack = file.name;
+        // }
       }
     };
     // Method to reset form to its initial state
