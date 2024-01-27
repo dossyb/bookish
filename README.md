@@ -6,8 +6,8 @@ This web app was created as my project for SIT120 Introduction to Responsive Web
 
 ## Planned features
 
-* Convert from Vue 2 to Vue 3 (uni required the app to be in Vue 2 despite it reaching EOL at the end of 2023).
-* Set placeholder image for books added without a cover.
+* ~~Convert from Vue 2 to Vue 3 (uni required the app to be in Vue 2 despite it reaching EOL at the end of 2023).~~ DONE!
+* ~~Set placeholder image for books added without a cover.~~ DONE!
 * Update pathing of assets for build version.
 * Add hover text on book covers in Homepage view to display book's title, this will allow the user to distinguish between multiple books with a placeholder cover.
 * Pre-load back cover when component is mounted rather than when arrow is clicked

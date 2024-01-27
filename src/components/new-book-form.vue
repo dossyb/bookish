@@ -104,8 +104,8 @@ export default {
       summary: '',
       genres: [],
       categories: [],
-      coverFront: '',
-      coverBack: ''
+      coverFront: 'placeholder.png',
+      coverBack: 'placeholder.png'
     });
     // Temporary storage for genre and category inputs
     const genreInput = ref('');
