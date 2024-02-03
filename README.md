@@ -9,6 +9,9 @@ This web app was created as my project for SIT120 Introduction to Responsive Web
 * ~~Convert from Vue 2 to Vue 3 (uni required the app to be in Vue 2 despite it reaching EOL at the end of 2023).~~ DONE!
 * Set placeholder image for books added without a cover. (issue with build version found)
 * ~~Update pathing of assets for build version.~~ DONE!
+* Add an edit page similar to the new book form that allows a user to edit the book details.
+* Add ability to delete a book from the user's bookshelf.
+* Add a database to replace books.json using Firebase.
 * Add hover text on book covers in Homepage view to display book's title, this will allow the user to distinguish between multiple books with a placeholder cover.
 * Pre-load back cover when component is mounted rather than when arrow is clicked
 * Fix some of the responsive side panel's functionality.
@@ -28,10 +31,7 @@ This web app was created as my project for SIT120 Introduction to Responsive Web
 * Change the "Go back" button so it returns to homepage view at the same scroll point. (remember how far the user scrolled down the page)
 * Add more details to book object such as new book form fields, page count etc.
 * Expand book details page functionality.
-* Add an edit page similar to the new book form that allows a user to edit the book details.
-* Add ability to delete a book from the user's bookshelf.
 * Clean up console log errors and warnings
 * Add cookies to remember user settings
-* Add a back-end (at least a DB).
 * Add user account functionality and authentication
 * Add social media elements such as being able to view other user's bookshelves and interact with them in some form.
