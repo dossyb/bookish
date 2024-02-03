@@ -104,15 +104,15 @@ export default {
       summary: '',
       genres: [],
       categories: [],
-      coverFront: 'placeholder.png',
-      coverBack: 'placeholder.png'
+      coverFront: 'https://d827xgdhgqbnd.cloudfront.net/wp-content/uploads/2016/04/09121712/book-cover-placeholder.png',
+      coverBack: 'https://d827xgdhgqbnd.cloudfront.net/wp-content/uploads/2016/04/09121712/book-cover-placeholder.png'
     });
     // Temporary storage for genre and category inputs
     const genreInput = ref('');
     const categoryInput = ref('');
     // Placeholder image paths for the cover previews
-    const coverFrontPreview = ref('/assets/covers/placeholder.png');
-    const coverBackPreview = ref('/assets/covers/placeholder.png');
+    const coverFrontPreview = ref('https://d827xgdhgqbnd.cloudfront.net/wp-content/uploads/2016/04/09121712/book-cover-placeholder.png');
+    const coverBackPreview = ref('https://d827xgdhgqbnd.cloudfront.net/wp-content/uploads/2016/04/09121712/book-cover-placeholder.png');
 
     // Method to preview the book cover image
     const previewCover = (event, coverType) => {

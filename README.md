@@ -7,7 +7,7 @@ This web app was created as my project for SIT120 Introduction to Responsive Web
 ## Planned features
 
 * ~~Convert from Vue 2 to Vue 3 (uni required the app to be in Vue 2 despite it reaching EOL at the end of 2023).~~ DONE!
-* Set placeholder image for books added without a cover. (issue with build version found)
+* ~~Set placeholder image for books added without a cover.~~ DONE!
 * ~~Update pathing of assets for build version.~~ DONE!
 * Add an edit page similar to the new book form that allows a user to edit the book details.
 * Add ability to delete a book from the user's bookshelf.
