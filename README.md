@@ -13,6 +13,7 @@ This web app was created as my project for SIT120 Introduction to Responsive Web
 * Add ability to delete a book from the user's bookshelf.
 * Add ability to remove genres and categories from the list in the form (both for adding and updating).
 * Add a database to replace books.json using Firebase.
+* Add icon to footer that links to GitHub repo.
 * Add hover text on book covers in Homepage view to display book's title, this will allow the user to distinguish between multiple books with a placeholder cover.
 * Pre-load back cover when component is mounted rather than when arrow is clicked
 * Change "Add new book" button to a plus symbol and make the text appear when hovered over.
