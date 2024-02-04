@@ -4,12 +4,13 @@
         <book-cover :coverFront="book.id.startsWith('501') ? '/assets/covers/' + book.coverFront : book.coverFront"
             :coverBack="book.coverBack && !book.id.startsWith('501') ? book.coverBack : (book.coverBack ? '/assets/covers/' + book.coverBack : null)"></book-cover>
         <div class="detailsContent">
+            <nav-button text="Edit" eventName="navigate" @navigate="navToEditBook" class="editButton"></nav-button>
             <!-- Heading section with series shown dynamically if series data exists-->
             <div class='detailsHeading'>
                 <h1>{{ book.title }}</h1>
                 <h2>{{ book.author }}</h2>
                 <h3 v-if="book.series && book.seriesNo">Book {{ book.seriesNo }} of {{ book.series }}</h3>
-                <h3>Published {{ book.publishedDate }}</h3>
+                <h3>Published {{ formattedDate }}</h3>
             </div>
             <!-- Book summary section -->
             <div class='detailsText'>
@@ -38,8 +39,9 @@
   
 <script>
 import { ref, computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import BookCover from './book-cover.vue'
+import { useRoute, useRouter } from 'vue-router';
+import BookCover from './book-cover.vue';
+import NavButton from './nav-button.vue';
 
 export default {
     // Books array passed down from App.vue
@@ -51,23 +53,43 @@ export default {
     },
     components: {
         'book-cover': BookCover,
+        'nav-button': NavButton,
     },
     setup(props) {
         const route = useRoute();
+        const router = useRouter();
         // Initialise book as empty object
         const book = ref({});
 
-    // Populate book object with details of the book in the books array with the ID matching the route
+        // Populate book object with details of the book in the books array with the ID matching the route
         onMounted(() => {
-        const bookId = route.params.id;
-        book.value = props.books.find(b => b.id === bookId) || {};
+            const bookId = route.params.id;
+            book.value = props.books.find(b => b.id === bookId) || {};
         });
 
         // Computed property to split the book summary into separate paragraphs
         const paragraphs = computed(() => {
             return book.value.summary ? book.value.summary.split('\\n\\n') : [];
         });
-        return { book, paragraphs };
+
+        // Format date string into a readable format for display in the book's details
+        const formattedDate = computed(() => {
+            if (!book.value.publishedDate) return '';
+            const months = ["January", "February", "March", "April", "May", "June",
+                            "July", "August", "September", "October", "November", "December"];
+            const dateParts = book.value.publishedDate.split('-');
+            const year = dateParts[0];
+            const month = months[parseInt(dateParts[1], 10) - 1];
+            const day = parseInt(dateParts[2], 10);
+
+            return `${month} ${day}, ${year}`;
+        });
+
+        const navToEditBook = () => {
+            router.push({ path: `/edit/${book.value.id}` });
+        };
+
+        return { book, paragraphs, formattedDate, navToEditBook };
     }
 }
 </script>
@@ -85,11 +107,19 @@ export default {
 
 /* Set max width to prevent content overflowing behind side panel */
 .detailsContent {
+    position: relative;
     max-width: 70%;
 }
 
 .detailsHeading {
     margin-top: 0;
+}
+
+.editButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 1em;
 }
 
 .detailsText,

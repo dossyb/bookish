@@ -4,14 +4,20 @@ import { createRouter, createWebHistory } from 'vue-router';
 import App from './App.vue';
 import Homepage from './components/homepage.vue';
 import BookDetails from './components/book-details.vue';
-import NewBookForm from './components/new-book-form.vue';
+import BookForm from './components/book-form.vue';
 import booksData from '../public/books.json';
 
 // Define Vue app routes - each route is mapped to a component and receives specific props
 const routes = [
   { path: '/', component: Homepage, props: { books: booksData } },
   { path: '/book/:id', component: BookDetails, props: { books: booksData } },
-  { path: '/new', component: NewBookForm },
+  { path: '/new', component: BookForm, props: { mode: 'add' } },
+  {
+    path: '/edit/:id',
+    component: BookForm,
+    // Modify this line to include booksData in the props
+    props: (route) => ({ mode: 'edit', bookId: route.params.id, books: booksData }),
+  },
 ];
 
 // Create VueRouter instance

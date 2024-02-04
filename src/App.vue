@@ -14,14 +14,14 @@
       <!-- App footer component -->
       <app-footer :style="{ 'margin-right': contentMargin }" />
       <!-- Popup notification for when a new book is added -->
-      <div v-if="showPopup" class="popup">Book added!</div>
+      <div v-if="showPopup" class="popup">{{ popupMessage }}</div>
     </div>
   </div>
 </template>
 
 <script>
 // Import Vue components and data
-import { onMounted, onBeforeUnmount, ref, computed } from 'vue';
+import { onMounted, onBeforeUnmount, ref, computed, reactive, provide } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import AppHeader from './components/app-header.vue'
 import AppFooter from './components/app-footer.vue'
@@ -43,18 +43,26 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const title = ref('Bookish');
-    const books = ref(booksData);
+    const books = reactive(booksData);
     const selectedBook = ref(booksData[0]);
     const selectedCategory = ref('All Books');
     const isCollapsed = ref(window.innerWidth < 700);
     const isFiltered = ref(false);
     const categories = ref(['All Books', 'Favourites', 'Read', 'Currently Reading', 'Unread', 'DNF', 'Fantasy', 'Classics', 'LGBT', 'Science Fiction', 'Non-Fiction', 'eBook', 'Audiobook', 'Paperback', 'Hardcover', 'Borrowed']);
-    const filteredBooks = ref(booksData);
     const showPopup = ref(false);
     const windowWidth = ref(window.innerWidth);
+    const popupMessage = ref('');
 
     const contentMargin = computed(() => {
       return windowWidth.value < COLLAPSE_WIDTH ? '0' : (isCollapsed.value ? '0' : '280px');
+    });
+
+    const filteredBooks = computed(() => {
+      if (selectedCategory.value === 'All Books') {
+        return books; // Assuming books is reactive
+      } else {
+        return books.filter(book => book.categories.includes(selectedCategory.value));
+      }
     });
 
     const handleResize = () => {
@@ -75,9 +83,9 @@ export default {
       isFiltered.value = category !== 'All Books';
       console.log(isFiltered.value);
       if (category === 'All Books') {
-        filteredBooks.value = books.value;
+        filteredBooks.value = books;
       } else {
-        filteredBooks.value = books.value.filter(book => book.categories.includes(category));
+        filteredBooks.value = books.filter(book => book.categories.includes(category));
       }
       if (route.path !== '/') {
         router.push('/');
@@ -99,21 +107,31 @@ export default {
     const addNewBook = (newBookData) => {
       console.log(newBookData);
       newBookData.id = `${Date.now()}`;
-      books.value.push(newBookData);
+      books.push(newBookData);
       router.push('/');
+      popupMessage.value = "Book added!";
       showPopup.value = true;
       setTimeout(() => {
         showPopup.value = false;
       }, POPUP_TIMEOUT);
     };
-    return { title, books, selectedBook, selectedCategory, isCollapsed, isFiltered, categories, filteredBooks, showPopup, windowWidth, contentMargin, handleCategoryFilter, handleResetFilter, updateCategories, addNewBook };
+
+    const updateBook = (updatedBook) => {
+      const index = books.findIndex(book => book.id === updatedBook.id);
+      if (index !== -1) {
+        books[index] = updatedBook;
+      }
+      popupMessage.value = "Book updated!";
+      showPopup.value = true;
+      setTimeout(() => {
+        showPopup.value = false;
+      }, POPUP_TIMEOUT);
+    };
+
+    provide('updateBook', updateBook);
+
+    return { title, books, popupMessage, selectedBook, selectedCategory, isCollapsed, isFiltered, categories, filteredBooks, showPopup, windowWidth, contentMargin, handleCategoryFilter, handleResetFilter, updateCategories, addNewBook };
   }
-  // props: {
-  //   book: {
-  //     type: Object,
-  //     default: () => ({})
-  //   }
-  // },
 }
 </script>
 

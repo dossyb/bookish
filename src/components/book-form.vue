@@ -1,7 +1,7 @@
 <template>
-  <div id="newBookForm">
+  <div id="bookForm">
     <!-- Heading for the form -->
-    <h2>Add a new book...</h2>
+    <h2>{{ formTitle }}</h2>
     <!-- Container for the entire form -->
     <div class='formContainer'>
       <!-- Container for the form's input elements -->
@@ -79,21 +79,45 @@
     </div>
     <!-- Container for the Reset and Submit buttons at the end of the form -->
     <div class='buttonBar'>
-      <nav-button text="Reset" eventName="reset-form" @reset-form="resetForm"></nav-button>
+      <nav-button v-if="mode === 'edit'" text="Cancel" eventName="cancel-edit" @cancel-edit="cancelEdit"></nav-button>
+      <nav-button v-else text="Reset" eventName="reset-form" @reset-form="resetForm"></nav-button>
       <nav-button text="Submit" eventName="submit-form" @submit-form="submitForm"></nav-button>
     </div>
   </div>
 </template>
   
 <script>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed, watch, inject } from 'vue';
+import { useRouter } from 'vue-router';
 import NavButton from './nav-button.vue';
 
 export default {
   components: {
     'nav-button': NavButton,
   },
-  setup(_, { emit }) {
+  props: {
+    // Indicate the form mode - 'add' or 'edit'
+    mode: {
+      type: String,
+      required: true,
+      default: 'add',
+      validator: function (value) {
+        return ['add', 'edit'].includes(value);
+      },
+    },
+    bookId: {
+      type: String,
+      required: false
+    },
+    // Books array passed down from App.vue
+    books: {
+      type: Array,
+      required: false,
+    },
+  },
+  setup(props, { emit }) {
+    const router = useRouter();
+    const updateBook = inject('updateBook');
     const formData = reactive({
       title: '',
       author: '',
@@ -114,6 +138,33 @@ export default {
     const coverFrontPreview = ref('https://d827xgdhgqbnd.cloudfront.net/wp-content/uploads/2016/04/09121712/book-cover-placeholder.png');
     const coverBackPreview = ref('https://d827xgdhgqbnd.cloudfront.net/wp-content/uploads/2016/04/09121712/book-cover-placeholder.png');
 
+    const formTitle = computed(() => {
+      return props.mode === 'edit' ? 'Edit book...' : 'Add a new book...';
+    });
+    watch(() => props.bookId, (newBookId) => {
+      console.log(props.books);
+      if (props.mode === 'edit' && newBookId && props.books) {
+        const bookToEdit = props.books.find(book => book.id === newBookId);
+        if (bookToEdit) {
+          Object.assign(formData, bookToEdit);
+          // coverFrontPreview.value = formData.coverFront || '';
+          // coverBackPreview.value = formData.coverBack || '';
+          console.log(formData);
+        }
+        // Object.assign(formData, newValue, {
+        //   genres: newValue.genres || [],
+        //   categories: newValue.categories || [],
+        //   coverFront: newValue.coverFront || 'https://d827xgdhgqbnd.cloudfront.net/wp-content/uploads/2016/04/09121712/book-cover-placeholder.png',
+        //   coverBack: newValue.coverBack || 'https://d827xgdhgqbnd.cloudfront.net/wp-content/uploads/2016/04/09121712/book-cover-placeholder.png'
+        // });
+        // coverFrontPreview.value = formData.coverFront;
+        // coverBackPreview.value = formData.coverBack;
+      }
+    }, {
+      deep: true,
+      immediate: true,
+    });
+
     // Method to preview the book cover image
     const previewCover = (event, coverType) => {
       const file = event.target.files[0];
@@ -132,40 +183,54 @@ export default {
         };
         // Read the file's name
         reader.readAsDataURL(file);
-        // Set the file name in formData for submission
-        // if (coverType === 'front') {
-        //   formData.coverFront = file.name;
-        // } else if (coverType === 'back') {
-        //   formData.coverBack = file.name;
-        // }
       }
     };
+
+    const cancelEdit = () => {
+      router.back();
+    }
+
     // Method to reset form to its initial state
     const resetForm = () => {
       Object.assign(formData, initialFormData());
-      coverFrontPreview.value = '/assets/covers/placeholder.png';
-      coverBackPreview.value = '/assets/covers/placeholder.png';
+      coverFrontPreview.value = 'https://d827xgdhgqbnd.cloudfront.net/wp-content/uploads/2016/04/09121712/book-cover-placeholder.png';
+      coverBackPreview.value = 'https://d827xgdhgqbnd.cloudfront.net/wp-content/uploads/2016/04/09121712/book-cover-placeholder.png';
     };
 
     // Method to submit the form's data
     const submitForm = () => {
       // Check if required fields are filled
-      if (formData.title.trim() && formData.author.trim()) {
+      if (isValidFormData(formData)) {
         // Explicitly set starRating as an integer
         formData.starRating = +formData.starRating;
-
         // Format and set the published date
-        if (formData.publishedDate) {
-          formData.publishedDate = formatDate(formData.publishedDate);
+        // if (formData.publishedDate) {
+        //   formData.publishedDate = formatDate(formData.publishedDate);
+        // }
+        if (props.mode === 'add') {
+          // Emit event with the submitted data and log to console
+          console.log('Book added: ', formData);
+          emit('add-book', formData);
+        } else if (props.mode === 'edit') {
+          // Find the book in the books array using bookId and update it
+          const bookIndex = props.books.findIndex(book => book.id === props.bookId);
+          if (bookIndex !== -1) {
+            const updatedBook = { ...props.books[bookIndex], ...formData, id: props.bookId };
+            console.log('Book updated:', updatedBook);
+            updateBook(updatedBook); // Assuming updateBook is a provided method to update the book in the parent component or store
+            router.push(`/book/${props.bookId}`);
+          } else {
+            console.error('Book to edit not found');
+          }
         }
-
-        // Emit event with the submitted data and log to console
-        console.log('Book added: ', formData);
-        emit('add-book', formData);
       } else {
         // Input validation alert if required fields aren't filled
-        alert('Please fill out all required fields.');
+        alert('Please fill out all required fields correctly.');
       }
+    };
+
+    const isValidFormData = (data) => {
+      return data.title.trim() && data.author.trim();
     };
 
     // Method to add a genre to the formData's genre array
@@ -182,21 +247,6 @@ export default {
         formData.categories = [...formData.categories, categoryInput.value.trim()];
         categoryInput.value = '';
       }
-    };
-
-    // Format date string into a readable format for display in the book's details
-    const formatDate = (date) => {
-      // Return empty string if no date set
-      if (!date) return '';
-
-      const months = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"];
-      const dateParts = date.split('-');
-      const year = dateParts[0];
-      const month = months[parseInt(dateParts[1], 10) - 1];
-      const day = parseInt(dateParts[2], 10);
-
-      return `${month} ${day}, ${year}`;
     };
 
     // Initialise function to return object containing empty form data
@@ -216,25 +266,20 @@ export default {
       };
     };
 
-    return { formData, genreInput, categoryInput, coverFrontPreview, coverBackPreview, previewCover, resetForm, submitForm, addGenre, addCategory, formatDate, initialFormData };
-  },
-  // this.genreInput = '';
-  // this.categoryInput = '';
-  // if (this.$refs.coverFrontInput) this.$refs.coverFrontInput.value = '';
-  // if (this.$refs.coverBackInput) this.$refs.coverBackInput.value = '';
-
-}
+    return { formData, genreInput, categoryInput, coverFrontPreview, coverBackPreview, formTitle, previewCover, cancelEdit, resetForm, submitForm, isValidFormData, addGenre, addCategory, initialFormData };
+  }
+};
 </script>
   
 <style scoped>
 /* Set flex styling on main container with column direction */
-#newBookForm {
+#bookForm {
   display: flex;
   flex-direction: column;
   padding: 2em;
 }
 
-#newBookForm h2 {
+#bookForm h2 {
   margin-bottom: 1em;
 }
 
