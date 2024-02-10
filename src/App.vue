@@ -10,7 +10,7 @@
         @update:isCollapsed="isCollapsed = $event" @update:selectedCategory="selectedCategory = $event"
         @filter-category="handleCategoryFilter" />
       <!-- Router view displaying the component for the current route -->
-      <router-view :filtered-books="filteredBooks" :style="{ 'margin-right': contentMargin }" @add-book="addNewBook" />
+      <router-view :filtered-books="filteredBooks" @delete-book="handleDeleteBook" :style="{ 'margin-right': contentMargin }" @add-book="addNewBook" />
       <!-- App footer component -->
       <app-footer :style="{ 'margin-right': contentMargin }" />
       <!-- Popup notification for when a new book is added -->
@@ -128,9 +128,21 @@ export default {
       }, POPUP_TIMEOUT);
     };
 
+    const handleDeleteBook = (bookId) => {
+      const index = books.findIndex(book => book.id === bookId);
+      if (index !== -1) {
+        books.splice(index, 1);
+      }
+      popupMessage.value = "Book deleted!";
+      showPopup.value = true;
+      setTimeout(() => {
+        showPopup.value = false;
+      }, POPUP_TIMEOUT);
+    };
+
     provide('updateBook', updateBook);
 
-    return { title, books, popupMessage, selectedBook, selectedCategory, isCollapsed, isFiltered, categories, filteredBooks, showPopup, windowWidth, contentMargin, handleCategoryFilter, handleResetFilter, updateCategories, addNewBook };
+    return { title, books, popupMessage, selectedBook, selectedCategory, isCollapsed, isFiltered, categories, filteredBooks, showPopup, windowWidth, contentMargin, handleCategoryFilter, handleResetFilter, updateCategories, addNewBook, handleDeleteBook };
   }
 }
 </script>

@@ -4,7 +4,10 @@
         <book-cover :coverFront="book.id.startsWith('501') ? '/assets/covers/' + book.coverFront : book.coverFront"
             :coverBack="book.coverBack && !book.id.startsWith('501') ? book.coverBack : (book.coverBack ? '/assets/covers/' + book.coverBack : null)"></book-cover>
         <div class="detailsContent">
-            <nav-button text="Edit" eventName="navigate" @navigate="navToEditBook" class="editButton"></nav-button>
+            <div class="modButtonContainer">
+                <nav-button text="Edit" eventName="navigate" @navigate="navToEditBook" class="modButton"></nav-button>
+                <nav-button text="Delete" eventName="navigate" @navigate="deleteBook" class="modButton"></nav-button>
+            </div>
             <!-- Heading section with series shown dynamically if series data exists-->
             <div class='detailsHeading'>
                 <h1>{{ book.title }}</h1>
@@ -55,7 +58,7 @@ export default {
         'book-cover': BookCover,
         'nav-button': NavButton,
     },
-    setup(props) {
+    setup(props, { emit }) {
         const route = useRoute();
         const router = useRouter();
         // Initialise book as empty object
@@ -76,7 +79,7 @@ export default {
         const formattedDate = computed(() => {
             if (!book.value.publishedDate) return '';
             const months = ["January", "February", "March", "April", "May", "June",
-                            "July", "August", "September", "October", "November", "December"];
+                "July", "August", "September", "October", "November", "December"];
             const dateParts = book.value.publishedDate.split('-');
             const year = dateParts[0];
             const month = months[parseInt(dateParts[1], 10) - 1];
@@ -89,7 +92,13 @@ export default {
             router.push({ path: `/edit/${book.value.id}` });
         };
 
-        return { book, paragraphs, formattedDate, navToEditBook };
+        const deleteBook = () => {
+            emit('delete-book', book.value.id);
+            router.push('/');
+            console.log('Book deleted');
+        };
+
+        return { book, paragraphs, formattedDate, navToEditBook, deleteBook };
     }
 }
 </script>
@@ -115,12 +124,16 @@ export default {
     margin-top: 0;
 }
 
-.editButton {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin: 1em;
+.modButtonContainer {
+    display: flex;
+    justify-content: right;
+    margin: 1em 0;
 }
+
+.modButton {
+    margin: 0 0.5em;
+}
+
 
 .detailsText,
 .genreList,
@@ -180,5 +193,17 @@ export default {
     .starRating {
         margin-left: 0;
     }
+
+    .modButtonContainer {
+        position: static;
+        order: -1; 
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 20px;
+
+    }
+    .modButton {
+    margin: 0 3em;
+}
 }
 </style>

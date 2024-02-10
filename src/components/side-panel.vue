@@ -32,7 +32,7 @@
       <input type='text' placeholder='Add new bookshelf...' class='newBookshelf' v-model="newBookshelf"
         @keyup.enter="addBookshelf">
       <!-- Submit button for new bookshelf -->
-      <img src='https://simpleicon.com/wp-content/uploads/plus.svg' v-on:click="addBookshelf">
+      <img src='https://www.pngarts.com/files/3/Plus-Symbol-Transparent-Images.png' v-on:click="addBookshelf">
     </div>
   </div>
 </template>
