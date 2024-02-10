@@ -41,7 +41,7 @@ This web app was created as my project for SIT120 Introduction to Responsive Web
 
 ## Bugs to Fix
 
-~~* Fix responsive styling of Edit button.~~ DONE!
+* ~~Fix responsive styling of Edit button.~~ DONE!
 * Fix minor styling issue with book form on smaller desktops.
 * Fix width of bookshelf and divider textures, slightly too short when the side panel is collapsed.
 * Fix input validation in the form (appears the HTML element's built-in validation doesn't work as it is not a HTML form).
