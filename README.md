@@ -12,35 +12,36 @@ This web app was created as my project for SIT120 Introduction to Responsive Web
 * ~~Add an edit page similar to the new book form that allows a user to edit the book details.~~ DONE!
 * ~~Add ability to delete a book from the user's bookshelf.~~ DONE!
 * Add ability to remove genres and categories from the list in the form (both for adding and updating).
+* Allow users to delete categories from side panel.
 * Add a database to replace books.json using Firebase.
+* Add icon to footer that links to GitHub repo.
+* Create new favicon.
 * Add hover text on book covers in Homepage view to display book's title, this will allow the user to distinguish between multiple books with a placeholder cover.
-* Pre-load back cover when component is mounted rather than when arrow is clicked
-* Add edit and delete icons underneath each book on the shelf in the Homepage view.
-* Change "Add new book" button to a plus symbol and make the text appear when hovered over.
-* Show 3 bookshelves by default regardless of number of books in books.json.
-* Apply some more animations and transitions to make everything look modern and nice.
 * Add search bar to app-header that finds the closest match for book and opens details view.
+* Pre-load back cover when component is mounted rather than when arrow is clicked.
+* Pre-load homepage assets prior to rendering when app is accessed for the first time.
+* Change "Add new book" button to a plus symbol and make the text appear when hovered over.
+* Show 3 bookshelves by default regardless of number of books in All Books.
+* Apply some more animations and transitions to make the app look modern and nice.
 * Add some shadows/3D effects to the book covers on the homepage view to create the illusion of books on shelves rather than just 2D images.
 * Add "Are you sure?" prompt when book is deleted.
 * Prompt a user to confirm if new category should be created if what they input doesn't match a category on the side panel.
-* Allow users to delete categories.
-* Create new favicon.
 * Add error handling and edge case handling.
 * Add sorting functionality.
 * Add input validation for cover upload.
-* Make categories clickable in book-details which has the same filtering functionality as the side-panel.
-* Add spines to each book in books.json and modify new book form to allow upload.
+* Make categories clickable in book-details which has the same filtering functionality as the side-panel (go back sends user back to book details page).
+* Add spine attribute to each book in database and modify new book form to allow upload.
 * Add book cover animation functionality to the homepage view (arrows on shelf divider).
-* Change the "Go back" button so it returns to homepage view at the same scroll point. (remember how far the user scrolled down the page)
-* Add more details to book object such as new book form fields, page count etc.
-* Expand book details page functionality.
+* Change the "Go back" button so it returns to previous view at the same scroll point. (remember how far the user scrolled down the page)
+* Add more details to book object via new book form fields (e.g. page count, edition)
+* Expand book details page functionality (edit star rating in page, page count, user reviews, alternate covers/editions etc.)
 * Add cookies to remember user settings.
 * Add user account functionality and authentication.
 * Add social media elements such as being able to view other user's bookshelves and interact with them in some form.
 
 ## Bugs to Fix
 
-~~* Fix responsive styling of Edit button.~~ DONE!
+* Fix responsive styling of Edit button.
 * Fix input validation in the form (appears the HTML element's built-in validation doesn't work as it is not a HTML form).
 * Fix book cover preview in edit form.
 * Fix styling of summary in book details for books added via form.
