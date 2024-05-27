@@ -38,6 +38,7 @@ This web app was created as my project for SIT120 Introduction to Responsive Web
 * Add cookies to remember user settings.
 * Add user account functionality and authentication.
 * Add social media elements such as being able to view other user's bookshelves and interact with them in some form.
+* Add filter by star rating.
 
 ## Bugs to Fix
 
